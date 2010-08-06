@@ -1,3 +1,4 @@
+# THIS MAKEFILE DOES NOT WORK.  USE RAKE INSTEAD.  IT IS SO MUCH BETTER 
 C_COMPILER=gcc
 TARGET_BASE = testunity
 ifeq ($(OS),Windows_NT)
@@ -20,8 +21,10 @@ endif
 all: clean default
 
 default:
+	echo "\nWhat the heck are you doing?  Use rake!\n"
+	exit 1
 	$(C_COMPILER) $(INC_DIRS) $(SYMBOLS) $(SRC_FILES) $(OUT_FILE)$(OUT_EXTENSION)
-	$(TARGET)
+	./$(TARGET)
 
 clean:
 	$(CLEANUP)

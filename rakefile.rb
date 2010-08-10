@@ -18,7 +18,7 @@ end
 
 desc "Generate test summary"
 task :summary do
-  report_summary
+  print(report_summary)
 end
 
 desc "Build and test Unity"

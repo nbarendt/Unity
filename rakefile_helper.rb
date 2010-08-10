@@ -95,7 +95,7 @@ module RakefileHelpers
     cmd_str = "#{compiler[:command]}#{compiler[:defines]}#{compiler[:options]}#{compiler[:includes]} #{file} " +
       "#{$cfg['compiler']['object_files']['prefix']}#{$cfg['compiler']['object_files']['destination']}" +
       "#{File.basename(file, C_EXTENSION)}#{$cfg['compiler']['object_files']['extension']}"
-    execute(cmd_str)
+    execute(cmd_str,false)
   end
   
   def build_linker_fields
@@ -121,7 +121,7 @@ module RakefileHelpers
       $cfg['linker']['bin_files']['prefix'] + ' ' +
       $cfg['linker']['bin_files']['destination'] +
       exe_name + $cfg['linker']['bin_files']['extension']
-    execute(cmd_str)
+    execute(cmd_str,false)
   end
   
   def build_simulator_fields
@@ -145,10 +145,11 @@ module RakefileHelpers
   end
   
   def execute(command_string, verbose=true)
-    report command_string
+    report(command_string) if verbose
     output = `#{command_string}`.chomp
     report(output) if (verbose && !output.nil? && (output.length > 0))
     if $?.exitstatus != 0
+      report(command_string) if !verbose
       raise "Command failed. (Returned #{$?.exitstatus})"
     end
     return output
@@ -162,6 +163,7 @@ module RakefileHelpers
     results = Dir[results_glob]
     summary.set_targets(results)
     summary.run
+    return summary.report
   end
   
   def run_tests(test_files)
@@ -221,7 +223,7 @@ module RakefileHelpers
       else
         cmd_str = "#{simulator[:command]} #{simulator[:pre_support]} #{executable} #{simulator[:post_support]}"
       end
-      output = execute(cmd_str)
+      output = execute(cmd_str, false)
       test_results = $cfg['compiler']['build_path'] + test_base
       if output.match(/OK$/m).nil?
         test_results += '.testfail'
